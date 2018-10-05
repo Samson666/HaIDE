@@ -19,11 +19,13 @@ ____________________________________________________________________
 class haStatusBar : public BView
 {
 	public:
-			haStatusBar(const char* name);
+			haStatusBar(BRect frame, const char* name);
 			void Draw(BRect updateRect);
+			void writeStatus(void);
+			
 			std::string status;
-			BStringView* text;
-	
+			BPoint textinset;
+			
 };
 
 #endif

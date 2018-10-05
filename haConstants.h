@@ -29,7 +29,9 @@ __________________________________________________
 #define HA_MENU_MESSAGE_FILE_OPEN 'MMFO'
 #define HA_MENU_MESSAGE_FILE_CLOSE 'MMFC'
 #define HA_MENU_MESSAGE_FILE_SAVE 'MMFS'
+#define HA_MENU_MESSAGE_FILE_SAVE_AS 'MMSA'
 #define HA_MENU_MESSAGE_FILE_QUIT 'MMFQ'
+#define HA_MENU_MESSAGE_FILE_NEW 'MMFN'
 
 //Edit Menu
 #define HA_MENU_MESSAGE_EDIT_CUT 'MMEC'
@@ -40,13 +42,16 @@ __________________________________________________
 
 //Help Menu
 #define HA_MENU_MESSAGE_HELP_ABOUT 'MMHA'
+#define HA_MENU_MESSAGE_HELP_TEST_POPEN 'MMTP'
 
 //haMenuBar GERMAN
 #ifdef HA_LANGUAGE_GERMAN
 	#define HA_MENU_FILE "Datei"
-		#define HA_MENU_FILE_OPEN "Öffnen"
+		#define HA_MENU_FILE_OPEN "Öffnen ..."
 		#define HA_MENU_FILE_CLOSE "Schließen"
 		#define HA_MENU_FILE_SAVE "Speichern"
+		#define HA_MENU_FILE_SAVE_AS "Speichern unter..."
+		#define HA_MENU_FILE_NEW "Neu"
 		#define HA_MENU_FILE_QUIT "Beenden"
 	#define HA_MENU_EDIT "Bearbeiten"
 		#define HA_MENU_EDIT_CUT "Kopieren"
@@ -55,6 +60,7 @@ __________________________________________________
 		#define HA_MENU_PROJECT_NEW "Neu"
 	#define HA_MENU_HELP "Hilfe"
 		#define HA_MENU_HELP_ABOUT "Über"
+		#define HA_MENU_HELP_TEST_POPEN "Test popen"
 #endif //haMenuBar GERMAN
 
 //haMenuBar ENGLISH
@@ -63,6 +69,8 @@ __________________________________________________
 		#define HA_MENU_FILE_OPEN "Open"
 		#define HA_MENU_FILE_CLOSE "Close"
 		#define HA_MENU_FILE_SAVE "Save"
+		#define HA_MENU_FILE_SAVE_AS "Save as..."
+		#define HA_MENU_FILE_NEW "New"
 		#define HA_MENU_FILE_QUIT "Quit"
 	#define HA_MENU_EDIT "Edit"
 		#define HA_MENU_EDIT_CUT "Copy"
@@ -75,17 +83,27 @@ __________________________________________________
 
 //__________________________________________________________________________________________
 
-//StatusBar
+//haViewStatusBar
 #define HA_STATUSBAR_HEIGHT 20
 #define HA_STATUSBAR_INSET 50
 #define HA_STATUSBAR_COLOR rgb_color{200,200,200}
 //__________________________________________________________________________________________
 
-//ToolBar
+//haViewToolBar
 #define HA_TOOLBAR_WIDTH 32
-#define HA_TOOLBAR_COLOR rgb_color{180,180,180}
+#define HA_TOOLBAR_COLOR rgb_color{200,200,200}
 
-//Project View
-#define HA_PROJECT_VIEW_COLOR rgb_color{180,180,180}
+//haViewProjectTree
+#define HA_PROJECTVIEW_COLOR rgb_color{180,180,180}
+#define HA_PROJECTVIEW_WIDTH 200
+#define HA_MESSAGE_PROJECTVIEW_DOUBLECLICK 'mpvd'
+#define HA_MESSAGE_PROJECTVIEW_SELECTED 'mpvs'
+
+//haViewEdit
+#define HA_EDITVIEW_INSET 5
+#define HA_MESSAGE_EDITVIEW_CHANGED 'MEVC'
+
+//haViewOuput
+#define HA_OUTPUTVIEW_HEIGHT 100
 
 #endif // HACONSTANTS_H

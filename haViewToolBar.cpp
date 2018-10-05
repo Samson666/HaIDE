@@ -4,17 +4,15 @@
 #include <stdio.h>
 
 
-haViewToolBar::haViewToolBar(const char* name)
-				: BView(name, B_WILL_DRAW)
+haViewToolBar::haViewToolBar(BRect frame, const char* name)
+				: BView(frame, name, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, B_WILL_DRAW)
 {
-	SetExplicitMaxSize(BSize(HA_TOOLBAR_WIDTH, 10000));
-	SetViewColor(HA_TOOLBAR_COLOR);
-	Draw(Frame());
+	SetViewColor(HA_TOOLBAR_COLOR);	
 
 }
 
 void haViewToolBar::Draw(BRect updateRect)
 {
-		StrokeLine(BPoint(0,0),BPoint(10,100));
+		
 		BView::Draw(updateRect);
 }

@@ -8,7 +8,7 @@
 class haMenuBar : public BMenuBar
 {
 	public:
-		haMenuBar(const char* name);
+		haMenuBar(BRect frame, const char* name);
 };
 
 #endif //HAMENUBAR_H
