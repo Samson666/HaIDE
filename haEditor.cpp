@@ -44,16 +44,31 @@ void haEditor::Draw(BRect updateRect)
 
 void haEditor::DrawCursor()
 {
-	SetHighColor(0,0,200);
+	SetHighColor(255,0,0);
+	SetCurrentCursorPosF();	
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	MovePenTo(currentCursorPosF, (float)currentLine * fontHeight + fHeight.descent);
 	if(cursorVisible)
-		//DrawString("!");
 		StrokeLine(BPoint(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent));
 	else
 		StrokeLine(BPoint(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent), B_SOLID_LOW);
-		//DrawString(" ");
+	//only invalidate the cursor rect
+	Invalidate(BRect(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent,currentCursorPosF,(float)currentLine * fontHeight + fHeight.descent));
+}
+
+void haEditor::SetCurrentCursorPosF()
+{
+	std::string actline;
+	int i=1;
+	for( std::string s : editorLines)
+	{	
+		actline = s;
+		i++;
+		if(i>currentLine)break;
+	}
+	//std::cout << "Cursor active line" << actline.substr(0,currentCursorPos) << std::endl;
+	currentCursorPosF = font.StringWidth(actline.substr(0,currentCursorPos).c_str());
 }
 
 //adding Text add the end of the editorLines list
@@ -61,6 +76,7 @@ void haEditor::addLine(std::string text)
 {
 	editorLines.push_back(text);
 	currentCursorPosF = font.StringWidth(text.c_str());
+	currentCursorPos = text.length();
 	lineCount++;
 	currentLine = lineCount;
 	Invalidate();
@@ -74,6 +90,7 @@ void haEditor::insertLine(std::string text, int pos)
 		it++;
 	editorLines.insert(it, text);
 	currentCursorPosF = font.StringWidth(text.c_str());
+	currentCursorPos = text.length();
 	currentLine = pos+1;
 	lineCount++;
 	Invalidate();
@@ -81,11 +98,49 @@ void haEditor::insertLine(std::string text, int pos)
 
 void haEditor::KeyDown(const char* bytes, int32 numBytes)
 {
-	std::cout << "KeyDown received\n" << std::endl;
-	std::cout << bytes[0] << std::endl;
-	MovePenTo(10,100);
-	DrawChar(bytes[0]);
-	Invalidate();
+	//std::cout << "KeyDown received\n" << std::endl;
+	//std::cout << bytes[0] << std::endl;
+	switch(bytes[0])
+	{
+		case B_LEFT_ARROW:
+		{
+			std::cout << "Left Arrow key" << std::endl;
+			currentCursorPos--;
+			DrawCursor();
+			break;
+		}
+		
+		case B_RIGHT_ARROW:
+		{
+			std::cout << "Right Arrow key" << std::endl;
+			currentCursorPos++;
+			DrawCursor();
+			break;
+		}
+		
+		case B_UP_ARROW:
+		{
+			std::cout << "Up Arrow key" << std::endl;
+			if(currentLine>1)
+			{
+				currentLine--;
+				DrawCursor();
+			}
+			break;
+		}
+		
+		case B_DOWN_ARROW:
+		{
+			std::cout << "Down Arrow key" << std::endl;
+			if(currentLine<lineCount)
+			{
+				currentLine++;
+				DrawCursor();
+			}
+			break;
+		}
+	}
+	
 }
 
 //Reading file from given filepath and put it our view
@@ -105,6 +160,7 @@ void haEditor::ReadFile(const char* filepath)
 				addLine(line);
 		}
 		myfile.close();
+		MakeFocus(true);
 	}
 	else std::cout << "unable to open file" << std::endl;
 }
@@ -137,6 +193,6 @@ void haEditor::ClearText()
 void haEditor::Pulse()
 {
 	cursorVisible = !cursorVisible;
-	Invalidate();
+	//Invalidate();
 }
 

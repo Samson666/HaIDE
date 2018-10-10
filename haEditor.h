@@ -23,6 +23,7 @@ class haEditor : public BView
 		void			ReadFile(const char* filepath);
 		void			SaveFile(const char* filepath);
 		void			ClearText();
+		void			SetCurrentCursorPosF();
 		
 		std::list<std::string> editorLines;
 		
