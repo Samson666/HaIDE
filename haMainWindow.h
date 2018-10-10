@@ -17,6 +17,7 @@
 #include "haViewProjectTree.h"
 #include "haViewStatusBar.h"
 #include "haViewSpacer.h"
+#include "haEditor.h"
 
 class haMainWindow : public BWindow
 {
@@ -39,7 +40,7 @@ public:
 			haStatusBar*		statusBar;
 			haViewToolBar*		toolBar;
 			haViewProjectTree* 	projectView;
-			haViewEditor*		editorView;
+			haEditor*			editorView;
 			haViewOutput*		outputView;
 			BFilePanel*			openFilePanel;
 			BFilePanel*			saveFilePanel;

@@ -104,23 +104,23 @@ void haMainWindow::MessageReceived(BMessage *msg)
 			break;
 		}
 		
-		case HA_MENU_MESSAGE_FILE_NEW:
-		{
-			int dResult = FileChangedDialog();
-			if(dResult == 2)
-			{
-				if(filePath.CountChars() < 1)
-					saveFilePanel->Show();
-				else
-					SaveFile(filePath.String());
-			}
-			if(dResult == 0)break;
-			editorView->SetText("");
-			filePath = "";
-			editorView->fileChanged = false;
-			SetWindowTitle();
-			break;
-		}
+//		case HA_MENU_MESSAGE_FILE_NEW:
+//		{
+//			int dResult = FileChangedDialog();
+//			if(dResult == 2)
+//			{
+//				if(filePath.CountChars() < 1)
+//					saveFilePanel->Show();
+//				else
+//					SaveFile(filePath.String());
+//			}
+//			if(dResult == 0)break;
+//			editorView->SetText("");
+//			filePath = "";
+//			editorView->fileChanged = false;
+//			SetWindowTitle();
+//			break;
+//		}
 		
 		case B_SAVE_REQUESTED:
 		{
@@ -151,28 +151,28 @@ void haMainWindow::MessageReceived(BMessage *msg)
 			break;
 		}
 		
-		case HA_MESSAGE_PROJECTVIEW_DOUBLECLICK:
-		{
-			haViewProjectTreeItem* item;
-			std::string path;
-			item = (haViewProjectTreeItem*)projectView->ItemAt(projectView->CurrentSelection());
-			path = item->filePath;
-			std::cout << item->filePath << std::endl;
-			
-			int dResult = FileChangedDialog();
-			if(dResult == 2)
-			{
-				if(filePath.CountChars() < 1)
-					saveFilePanel->Show();
-				else
-					SaveFile(filePath.String());
-			}
-			if(dResult == 0)break;
-			editorView->SetText("");
-			filePath = "";
-			editorView->fileChanged = false;
-			OpenFile(path.c_str());
-		}
+//		case HA_MESSAGE_PROJECTVIEW_DOUBLECLICK:
+//		{
+//			haViewProjectTreeItem* item;
+//			std::string path;
+//			item = (haViewProjectTreeItem*)projectView->ItemAt(projectView->CurrentSelection());
+//			path = item->filePath;
+//			std::cout << item->filePath << std::endl;
+//			
+//			int dResult = FileChangedDialog();
+//			if(dResult == 2)
+//			{
+//				if(filePath.CountChars() < 1)
+//					saveFilePanel->Show();
+//				else
+//					SaveFile(filePath.String());
+//			}
+//			if(dResult == 0)break;
+//			editorView->SetText("");
+//			filePath = "";
+//			editorView->fileChanged = false;
+//			OpenFile(path.c_str());
+//		}
 		
 		default:
 		{
@@ -185,15 +185,15 @@ void haMainWindow::MessageReceived(BMessage *msg)
 
 bool haMainWindow::QuitRequested(void)
 {
-	int dResult = FileChangedDialog();
-	if(dResult == 2)
-	{
-		if(filePath.CountChars() < 1)
-		saveFilePanel->Show();
-		else
-		SaveFile(filePath.String());
-	}
-	if(dResult == 0)return false;
+//	int dResult = FileChangedDialog();
+//	if(dResult == 2)
+//	{
+//		if(filePath.CountChars() < 1)
+//		saveFilePanel->Show();
+//		else
+//		SaveFile(filePath.String());
+//	}
+//	if(dResult == 0)return false;
 	be_app->PostMessage(B_QUIT_REQUESTED);
 	return true;
 }
@@ -209,14 +209,14 @@ void haMainWindow::OpenFile(const entry_ref &ref)
 	BFile file(&realRef, B_READ_ONLY);
 	if(file.InitCheck() != B_OK)
 		return;
-		
-	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
-	{
-		BPath path(&realRef);
-		filePath = path.Path();
-		editorView->fileChanged = false;
-		SetWindowTitle();
-	}
+//		
+//	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
+//	{
+//		BPath path(&realRef);
+//		filePath = path.Path();
+//		editorView->fileChanged = false;
+//		SetWindowTitle();
+//	}
 			
 }
 
@@ -227,12 +227,13 @@ void haMainWindow::OpenFile(const char* path)
 	if(file.InitCheck() != B_OK)
 		return;
 	
-	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
-	{
-		filePath = path;
-		editorView->fileChanged = false;
-		SetWindowTitle();
-	}
+//	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
+//	{
+//		filePath = path;
+//		editorView->fileChanged = false;
+//		editorView->StyleCompleteText();
+//		SetWindowTitle();
+//	}
 	
 }
 
@@ -244,14 +245,14 @@ void haMainWindow::SaveFile(const char* path)
 	if(file.SetTo(path, B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE)  != B_OK)
 		return;
 	
-	if(BTranslationUtils::PutStyledText(editorView, &file) == B_OK)
-	{
-		filePath = path;
-		BNodeInfo nodeInfo(&file);
-		nodeInfo.SetType("text/plain");
-		editorView->fileChanged = false;
-		SetWindowTitle();
-	}
+//	if(BTranslationUtils::PutStyledText(editorView, &file) == B_OK)
+//	{
+//		filePath = path;
+//		BNodeInfo nodeInfo(&file);
+//		nodeInfo.SetType("text/plain");
+//		editorView->fileChanged = false;
+//		SetWindowTitle();
+//	}
 }
 
 void haMainWindow::TestPopen(void)
@@ -331,10 +332,7 @@ void haMainWindow::BuildLayout()
 		er.bottom -= HA_STATUSBAR_HEIGHT + B_H_SCROLL_BAR_HEIGHT + HA_OUTPUTVIEW_HEIGHT + 1;
 		er.left += HA_PROJECTVIEW_WIDTH + HA_TOOLBAR_WIDTH;
 		er.right -= B_V_SCROLL_BAR_WIDTH;
-		BFont font;
-		font.SetSize(30.0);
-		const rgb_color color = rgb_color{0,0,200};		
-		editorView = new haViewEditor(er, "editorview", &font, &color);
+		editorView = new haEditor(er, "editorview");
 		editorView->scrollview = new BScrollView("editorscrollview",editorView,B_FOLLOW_ALL,0,true,true);
 		topView->AddChild(editorView->scrollview);
 		

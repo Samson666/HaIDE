@@ -9,11 +9,12 @@
 class haViewEditor : public BTextView
 {
 	public:
-			haViewEditor(BRect frame, const char* name, BFont* font, const rgb_color* color);
+			haViewEditor(BRect frame, const char* name);
 			void Draw(BRect updateRect);
 			void InsertText(const char* text, int32 length, int32 offset, const text_run_array* runs);
 			void DeleteText(int32 start, int32 finish);
-			std::string StyleText(std::string text);
+			void StyleText(int32 offset, int32 length);
+			void StyleCompleteText();
 			void AttachedToWindow();
 			
 			BFont			font;
