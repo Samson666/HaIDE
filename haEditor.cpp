@@ -5,6 +5,7 @@
 #include <fstream>
 
 //includes
+#include "haConstants.h"
 #include "haEditor.h"
 
 
@@ -13,22 +14,22 @@ haEditor::haEditor(BRect frame, const char* name)
 {
 	looper = new BLooper();
 	GetFont(&font);
-//	font.SetSize(30.0);
-//	SetFont(&font);
+	//font.SetSize(30.0);
+	//SetFont(&font);
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	fontHeight = fHeight.ascent + fHeight.descent;
 	addLine("This a Text");
-	addLine("Another Text");
-	addLine("Blubbel");
+	addLine("{Another Text");
+	addLine("{Blubbel}{i}");
 	insertLine("blabla", 1);
 	insertLine("blabla1", 1);
-	insertLine("blabla7", 0);
+	insertLine("blabla7}", 0);
 }
 
 void haEditor::Draw(BRect updateRect)
 {
-	SetHighColor(0,200,0);
+	SetHighColor(HA_EDIT_VIEW_TEXT_COLOR);
 	int i=1;
 	for( std::string s : editorLines)
 	{
@@ -44,11 +45,15 @@ void haEditor::Draw(BRect updateRect)
 void haEditor::DrawCursor()
 {
 	SetHighColor(0,0,200);
-	MovePenTo(currentCursorPosF,currentLine * fontHeight);
+	font_height fHeight;
+	font.GetHeight(&fHeight);
+	MovePenTo(currentCursorPosF, (float)currentLine * fontHeight + fHeight.descent);
 	if(cursorVisible)
-		DrawString("!");
+		//DrawString("!");
+		StrokeLine(BPoint(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent));
 	else
-		DrawString(" ");
+		StrokeLine(BPoint(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent), B_SOLID_LOW);
+		//DrawString(" ");
 }
 
 //adding Text add the end of the editorLines list
@@ -83,22 +88,50 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 	Invalidate();
 }
 
+//Reading file from given filepath and put it our view
 void haEditor::ReadFile(const char* filepath)
 {
-	std::cout << "ReadFile " << filepath << std::endl;
+	//std::cout << "ReadFile " << filepath << std::endl;
 	std::string line;
 	std::ifstream myfile(filepath);
 	if(myfile.is_open())
 	{
 		while( getline (myfile, line))
 		{
-			std::cout << line << std::endl;
-			if(line != "STXT")
+			//std::cout << "new line read" << std::endl;
+			//std::cout << line << std::endl;
+			//filtering out styled text tags
+			if((line.compare(0,4,"STXT")!=0) && (line.compare(0,4,"STYL")!=0))
 				addLine(line);
 		}
 		myfile.close();
 	}
 	else std::cout << "unable to open file" << std::endl;
+}
+
+void haEditor::SaveFile(const char* filepath)
+{
+	//std::cout << "Saving File " << filepath << std::endl;
+	std::ofstream myfile(filepath);
+	if(myfile.is_open())
+	{
+		for( std::string s : editorLines)
+			myfile << s << std::endl;
+		myfile.close();
+	}
+}
+
+void haEditor::ClearText()
+{
+	//clear the lines list
+	editorLines.clear();
+	
+	//setting all cursor and line position to 0
+	lineCount = 0;
+	currentLine = 0;
+	currentCursorPos = 0;
+	currentCursorPosF = 0;
+	
 }
 
 void haEditor::Pulse()

@@ -21,10 +21,12 @@ class haEditor : public BView
 		void			DrawCursor();
 		void			KeyDown(const char* bytes, int32 numBytes);
 		void			ReadFile(const char* filepath);
+		void			SaveFile(const char* filepath);
+		void			ClearText();
+		
+		std::list<std::string> editorLines;
 		
 		BScrollView*	scrollview;
-		//std::string		editorText;
-		std::list<std::string> editorLines;
 		BLooper*		looper;
 		BFont			font;
 		BPoint			textOffset;
