@@ -14,8 +14,8 @@ haEditor::haEditor(BRect frame, const char* name)
 {
 	looper = new BLooper();
 	GetFont(&font);
-	//font.SetSize(30.0);
-	//SetFont(&font);
+	font.SetSize(20.0);
+	SetFont(&font);
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	fontHeight = fHeight.ascent + fHeight.descent;
@@ -44,6 +44,7 @@ void haEditor::Draw(BRect updateRect)
 
 void haEditor::DrawCursor()
 {
+	if(!IsFocus())return;
 	SetHighColor(255,0,0);
 	SetCurrentCursorPosF();	
 	font_height fHeight;
@@ -102,9 +103,9 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 	//std::cout << bytes[0] << std::endl;
 	switch(bytes[0])
 	{
+		//moving cursor
 		case B_LEFT_ARROW:
 		{
-			std::cout << "Left Arrow key" << std::endl;
 			currentCursorPos--;
 			DrawCursor();
 			break;
@@ -112,7 +113,6 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_RIGHT_ARROW:
 		{
-			std::cout << "Right Arrow key" << std::endl;
 			currentCursorPos++;
 			DrawCursor();
 			break;
@@ -120,7 +120,6 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_UP_ARROW:
 		{
-			std::cout << "Up Arrow key" << std::endl;
 			if(currentLine>1)
 			{
 				currentLine--;
@@ -131,7 +130,6 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_DOWN_ARROW:
 		{
-			std::cout << "Down Arrow key" << std::endl;
 			if(currentLine<lineCount)
 			{
 				currentLine++;
@@ -143,18 +141,61 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 	
 }
 
+void haEditor::MouseDown(BPoint where)
+{
+	MakeFocus(true);
+	mouseDown = true;
+	DrawCursor();
+	CoordsToCursor(where);
+}
+
+void haEditor::MouseUp(BPoint where)
+{
+	mouseDown = false;
+}
+
+//finding the line and char at mousecoords and set the cursor 
+void haEditor::CoordsToCursor(BPoint mousecoords)
+{
+	float mx = mousecoords.x;
+	float my = mousecoords.y;
+	font_height fHeight;
+	font.GetHeight(&fHeight);
+	
+	for(int i = 1; i <= lineCount; i++)
+	{
+		float l = i * fontHeight;
+		float lt = l - fHeight.ascent;
+		float lb = l + fHeight.descent;
+		if(my >=lt && my <=lb)
+		{
+			currentLine = i;
+			break;
+		}
+	}
+	std::string actline;
+	int i=1;
+	for( std::string s : editorLines)
+	{	
+		actline = s;
+		i++;
+		if(i>currentLine)break;
+	}
+	//tricky trying to get the font width :-) Its ok since we are using only a single font size...
+	float fontwidth = font.StringWidth(actline.c_str()) / actline.length();
+	currentCursorPos = mx/fontwidth;
+	DrawCursor();	 	
+}
+
 //Reading file from given filepath and put it our view
 void haEditor::ReadFile(const char* filepath)
 {
-	//std::cout << "ReadFile " << filepath << std::endl;
 	std::string line;
 	std::ifstream myfile(filepath);
 	if(myfile.is_open())
 	{
 		while( getline (myfile, line))
 		{
-			//std::cout << "new line read" << std::endl;
-			//std::cout << line << std::endl;
 			//filtering out styled text tags
 			if((line.compare(0,4,"STXT")!=0) && (line.compare(0,4,"STYL")!=0))
 				addLine(line);

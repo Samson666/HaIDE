@@ -20,13 +20,18 @@ class haEditor : public BView
 		void 			insertLine(std::string text, int pos);
 		void			DrawCursor();
 		void			KeyDown(const char* bytes, int32 numBytes);
+		void			MouseDown(BPoint where);
+		void			MouseUp(BPoint where);
 		void			ReadFile(const char* filepath);
 		void			SaveFile(const char* filepath);
 		void			ClearText();
 		void			SetCurrentCursorPosF();
+		void			CoordsToCursor(BPoint mousecoords);
 		
 		std::list<std::string> editorLines;
 		
+		bool			mouseDown = false;
+		bool			mouseUp = false;
 		BScrollView*	scrollview;
 		BLooper*		looper;
 		BFont			font;
