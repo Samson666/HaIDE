@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
-#include <Application.h>
 
 //includes
 #include "haConstants.h"
@@ -13,13 +12,19 @@
 haEditor::haEditor(BRect frame, const char* name)
 			: BView(frame, name, B_FOLLOW_ALL, B_WILL_DRAW | B_PULSE_NEEDED)
 {
+	looper = new BLooper();
 	GetFont(&font);
 	//font.SetSize(20.0);
 	//SetFont(&font);
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	fontHeight = fHeight.ascent + fHeight.descent;
-	addLine(""); //creating an empty line at the beginning of the text
+	addLine("This a Text");
+	addLine("{Another Text");
+	addLine("{Blubbel}{i}");
+	insertLine("blabla", 1);
+	insertLine("blabla1", 1);
+	insertLine("blabla7}", 0);
 }
 
 void haEditor::Draw(BRect updateRect)
@@ -35,8 +40,6 @@ void haEditor::Draw(BRect updateRect)
 	
 	DrawCursor();
 	BView::Draw(updateRect);
-	BLooper* l = Looper();
-	l->PostMessage(HA_MESSAGE_EDITVIEW_STATUS_CHANGED);
 }
 
 void haEditor::DrawCursor()
@@ -69,7 +72,7 @@ void haEditor::SetCurrentCursorPosF()
 	currentCursorPosF = font.StringWidth(actline.substr(0,currentCursorPos).c_str());
 }
 
-//adding text line add the end of the editorLines list
+//adding Text add the end of the editorLines list
 void haEditor::addLine(std::string text)
 {
 	editorLines.push_back(text);
@@ -80,10 +83,9 @@ void haEditor::addLine(std::string text)
 	Invalidate();
 }
 
-//inserting text line at pos
 void haEditor::insertLine(std::string text, int pos)
 {
-	std::vector<std::string>::iterator it;
+	std::list<std::string>::iterator it;
 	it = editorLines.begin();
 	for(int i=0; i<pos; i++)
 		it++;
@@ -95,42 +97,6 @@ void haEditor::insertLine(std::string text, int pos)
 	Invalidate();
 }
 
-//inserting a character at currentLine/currentCursorPos
-void haEditor::addChar(const char* c)
-{
-	std::string line = editorLines[currentLine-1];
-	if(currentCursorPos > (int)line.length())currentCursorPos = line.length(); //check if the position is in limit
-	line.insert(currentCursorPos++,c);
-	editorLines[currentLine-1]=line;
-	Invalidate();
-}
-
-//deleting a character at currentLine/currentCursorPos
-void haEditor::deleteChar()
-{
-	std::string line = editorLines[currentLine-1];
-	line.erase(--currentCursorPos, 1);
-	editorLines[currentLine-1]=line;
-	Invalidate();
-	printf("Delete Char\n");
-}
-
-//inserting a new line after the current line
-void haEditor::newLine()
-{
-	insertLine("", currentLine);
-}
-
-void haEditor::deleteLine()
-{
-	editorLines.erase(editorLines.begin()+currentLine+1);
-	currentLine--;
-	lineCount--;
-	Invalidate();
-}
-
-//Messages
-//KeyDown
 void haEditor::KeyDown(const char* bytes, int32 numBytes)
 {
 	//std::cout << "KeyDown received\n" << std::endl;
@@ -147,11 +113,8 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_RIGHT_ARROW:
 		{
-			if(currentCursorPos < (int)editorLines[currentLine-1].length())
-			{
-				currentCursorPos++;
-				DrawCursor();
-			}
+			currentCursorPos++;
+			DrawCursor();
 			break;
 		}
 		
@@ -174,57 +137,21 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			}
 			break;
 		}
-		
-		case B_BACKSPACE:
-		{
-			if(currentCursorPos>0)
-				deleteChar();
-			else
-			{
-				if(lineCount > 1)
-					deleteLine();
-			}
-			break;
-		}
-		
-		case B_ENTER:
-		{
-			newLine();
-			break;
-		}	
-		
-		default:
-		{
-			//addLine("BlaBlubber");
-			addChar(bytes);
-			break;
-		}
 	}
-	
 	
 }
 
-//MouseDown
 void haEditor::MouseDown(BPoint where)
 {
 	MakeFocus(true);
-	mouseIsDown = true;
+	mouseDown = true;
 	DrawCursor();
 	CoordsToCursor(where);
 }
 
-//MouseUp
 void haEditor::MouseUp(BPoint where)
 {
-	mouseIsDown = false;
-}
-
-//MouseMove
-void haEditor::MouseMoved(BPoint where, uint32 code, const BMessage* dragMessage)
-{
-	//std::cout << "Mouse Moved" << std::endl;
-	BView::MouseMoved(where, code, dragMessage);
-	
+	mouseDown = false;
 }
 
 //finding the line and char at mousecoords and set the cursor 

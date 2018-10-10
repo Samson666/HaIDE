@@ -102,6 +102,7 @@ __________________________________________________
 //haViewEdit
 #define HA_EDITVIEW_INSET 5
 #define HA_MESSAGE_EDITVIEW_CHANGED 'MEVC'
+#define HA_MESSAGE_EDITVIEW_STATUS_CHANGED 'MEVS'
 #define HA_EDIT_VIEW_TEXT_COLOR rgb_color{0,0,0}
 
 //haViewOuput

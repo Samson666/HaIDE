@@ -65,7 +65,6 @@ void haMainWindow::MessageReceived(BMessage *msg)
 {
 	switch (msg->what)
 	{
-		
 		case HA_MENU_MESSAGE_FILE_QUIT:
 		{
 			QuitRequested();
@@ -149,14 +148,6 @@ void haMainWindow::MessageReceived(BMessage *msg)
 		case HA_MESSAGE_EDITVIEW_CHANGED:
 		{
 			SetWindowTitle();
-			break;
-		}
-		
-		case HA_MESSAGE_EDITVIEW_STATUS_CHANGED:
-		{
-			std::string s = std::to_string(editorView->currentCursorPos);
-			statusBar->status = s;
-			statusBar->writeStatus();
 			break;
 		}
 		
@@ -332,7 +323,7 @@ void haMainWindow::BuildLayout()
 		
 		//EditorView
 		BRect er = topView->Bounds();
-		er.top += mr.Height() + 1;
+		er.top += mr.Height();
 		er.bottom -= HA_STATUSBAR_HEIGHT + B_H_SCROLL_BAR_HEIGHT + HA_OUTPUTVIEW_HEIGHT + 1;
 		er.left += HA_PROJECTVIEW_WIDTH + HA_TOOLBAR_WIDTH;
 		er.right -= B_V_SCROLL_BAR_WIDTH;
