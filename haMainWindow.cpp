@@ -151,28 +151,28 @@ void haMainWindow::MessageReceived(BMessage *msg)
 			break;
 		}
 		
-//		case HA_MESSAGE_PROJECTVIEW_DOUBLECLICK:
-//		{
-//			haViewProjectTreeItem* item;
-//			std::string path;
-//			item = (haViewProjectTreeItem*)projectView->ItemAt(projectView->CurrentSelection());
-//			path = item->filePath;
-//			std::cout << item->filePath << std::endl;
-//			
-//			int dResult = FileChangedDialog();
-//			if(dResult == 2)
-//			{
-//				if(filePath.CountChars() < 1)
-//					saveFilePanel->Show();
-//				else
-//					SaveFile(filePath.String());
-//			}
-//			if(dResult == 0)break;
-//			editorView->SetText("");
-//			filePath = "";
-//			editorView->fileChanged = false;
-//			OpenFile(path.c_str());
-//		}
+		case HA_MESSAGE_PROJECTVIEW_DOUBLECLICK:
+		{
+			haViewProjectTreeItem* item;
+			std::string path;
+			item = (haViewProjectTreeItem*)projectView->ItemAt(projectView->CurrentSelection());
+			path = item->filePath;
+			std::cout << item->filePath << std::endl;
+			
+			int dResult = FileChangedDialog();
+			if(dResult == 2)
+			{
+				if(filePath.CountChars() < 1)
+					saveFilePanel->Show();
+				else
+					SaveFile(filePath.String());
+			}
+			if(dResult == 0)break;
+			//editorView->SetText("");
+			filePath = "";
+			editorView->fileChanged = false;
+			OpenFile(path.c_str());
+		}
 		
 		default:
 		{
@@ -209,6 +209,8 @@ void haMainWindow::OpenFile(const entry_ref &ref)
 	BFile file(&realRef, B_READ_ONLY);
 	if(file.InitCheck() != B_OK)
 		return;
+	BPath path(&realRef);
+	editorView->ReadFile(path.Path());
 //		
 //	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
 //	{
@@ -227,6 +229,7 @@ void haMainWindow::OpenFile(const char* path)
 	if(file.InitCheck() != B_OK)
 		return;
 	
+	editorView->ReadFile(path);
 //	if(BTranslationUtils::GetStyledText(&file, editorView) == B_OK)
 //	{
 //		filePath = path;
@@ -335,6 +338,7 @@ void haMainWindow::BuildLayout()
 		editorView = new haEditor(er, "editorview");
 		editorView->scrollview = new BScrollView("editorscrollview",editorView,B_FOLLOW_ALL,0,true,true);
 		topView->AddChild(editorView->scrollview);
+		editorView->addLine("This is the first Line");
 		
 		//OutputView
 		BRect ovr = topView->Bounds();
