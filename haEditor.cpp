@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
-#include <Application.h>
 
 //includes
 #include "haConstants.h"
