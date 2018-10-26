@@ -217,8 +217,9 @@ void haEditor::MouseDown(BPoint where)
 {
 	MakeFocus(true);
 	mouseIsDown = true;
-	DrawCursor();
+
 	CoordsToCursor(where);
+	DrawCursor();
 }
 
 //MouseUp
@@ -228,21 +229,25 @@ void haEditor::MouseUp(BPoint where)
 }
 
 //MouseMove
+//!!! adding here code to mark/unmark characters !!!
 void haEditor::MouseMoved(BPoint where, uint32 code, const BMessage* dragMessage)
 {
 	//std::cout << "Mouse Moved" << std::endl;
-	BView::MouseMoved(where, code, dragMessage);
-	
+	BView::MouseMoved(where, code, dragMessage);	
 }
 
 //finding the line and char at mousecoords and set the cursor 
 void haEditor::CoordsToCursor(BPoint mousecoords)
 {
+	//getting the mouse coordinates in the editorView
 	float mx = mousecoords.x;
 	float my = mousecoords.y;
+	
+	//getting the height of the used font
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	
+	//!!!!! Hier Optimieren!!!!!
 	for(int i = 1; i <= lineCount; i++)
 	{
 		float l = i * fontHeight;
@@ -254,6 +259,7 @@ void haEditor::CoordsToCursor(BPoint mousecoords)
 			break;
 		}
 	}
+	
 	std::string actline;
 	int i=1;
 	for( std::string s : editorLines)
@@ -265,6 +271,7 @@ void haEditor::CoordsToCursor(BPoint mousecoords)
 	//tricky trying to get the font width :-) Its ok since we are using only a single font size...
 	float fontwidth = font.StringWidth(actline.c_str()) / actline.length();
 	currentCursorPos = mx/fontwidth;
+	if(currentCursorPos < 0)currentCursorPos = 0; //dont let cursor position less then zero!
 	DrawCursor();	 	
 }
 
