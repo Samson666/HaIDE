@@ -54,10 +54,17 @@ void haEditor::DrawCursor()
 	Invalidate(BRect(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent,currentCursorPosF,(float)currentLine * fontHeight + fHeight.descent));
 }
 
+//returns the length of "line"
+int haEditor::GetLineLength(int line)
+{
+	std::string l = editorLines[line];
+	return(l.length());
+}
+
+//returns the length of currentLine
 int haEditor::GetCurrentLineLength()
 {
-	std::string line = editorLines[currentLine-1];
-	return(line.length());
+	return(GetLineLength(currentLine-1));
 }
 
 //setting currentCursorPosF to the end of currentLine in coordinates (Pixels)
@@ -131,8 +138,8 @@ void haEditor::deleteLine(int line)
 {	
 	if(line > 1)
 	{
-		editorLines.erase(editorLines.begin()+line);
-		//currentLine--;
+		editorLines.erase(editorLines.begin()+line-1);
+		currentLine--;
 		lineCount--;
 		Invalidate();
 	}
@@ -197,16 +204,46 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}
 		
+		case B_END:
+		{
+			if(GetCurrentLineLength() > 1)
+			{
+				currentCursorPos = GetCurrentLineLength() + 1;
+				DrawCursor();
+			}
+			break;
+		}
+		
+		case B_HOME:
+		{
+			currentCursorPos = 0;
+			DrawCursor();
+			break;
+		}
+		
 		case B_BACKSPACE:
 		{
 			if(currentCursorPos>0)
 				deleteChar();
 			else
+			{
+				
 				if(currentLine > 1)
 				{
-					currentLine--;
-					deleteLine(currentLine);
-				}
+					if(GetCurrentLineLength() == 0)
+					{
+						deleteLine(currentLine);
+						currentCursorPos = GetCurrentLineLength();
+						DrawCursor();
+					}
+					else
+					{
+						currentLine--; //move cursor one line up
+						currentCursorPos = GetCurrentLineLength();
+						DrawCursor();
+					}
+				}					
+			}
 			break;
 		}
 		

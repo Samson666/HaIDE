@@ -33,6 +33,7 @@ class haEditor : public BView
 		void			ClearText();
 		void			SetCurrentCursorPosF();
 		void			CoordsToCursor(BPoint mousecoords);
+		int				GetLineLength(int line);
 		int				GetCurrentLineLength();
 		
 		std::vector<std::string> editorLines;
