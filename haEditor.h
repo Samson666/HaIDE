@@ -22,7 +22,7 @@ class haEditor : public BView
 		void			deleteChar();
 		void 			insertLine(std::string text, int pos);
 		void			newLine();
-		void			deleteLine();
+		void			deleteLine(int line);
 		void			DrawCursor();
 		void			KeyDown(const char* bytes, int32 numBytes);
 		void			MouseDown(BPoint where);
@@ -33,6 +33,7 @@ class haEditor : public BView
 		void			ClearText();
 		void			SetCurrentCursorPosF();
 		void			CoordsToCursor(BPoint mousecoords);
+		int				GetCurrentLineLength();
 		
 		std::vector<std::string> editorLines;
 		

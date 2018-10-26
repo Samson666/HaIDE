@@ -42,7 +42,7 @@ void haEditor::DrawCursor()
 {
 	if(!IsFocus())return;
 	SetHighColor(255,0,0);
-	SetCurrentCursorPosF();	
+	SetCurrentCursorPosF();
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	MovePenTo(currentCursorPosF, (float)currentLine * fontHeight + fHeight.descent);
@@ -54,6 +54,13 @@ void haEditor::DrawCursor()
 	Invalidate(BRect(currentCursorPosF,(float)currentLine * fontHeight - fHeight.ascent,currentCursorPosF,(float)currentLine * fontHeight + fHeight.descent));
 }
 
+int haEditor::GetCurrentLineLength()
+{
+	std::string line = editorLines[currentLine-1];
+	return(line.length());
+}
+
+//setting currentCursorPosF to the end of currentLine in coordinates (Pixels)
 void haEditor::SetCurrentCursorPosF()
 {
 	std::string actline;
@@ -120,12 +127,16 @@ void haEditor::newLine()
 	insertLine("", currentLine);
 }
 
-void haEditor::deleteLine()
-{
-	editorLines.erase(editorLines.begin()+currentLine+1);
-	currentLine--;
-	lineCount--;
-	Invalidate();
+void haEditor::deleteLine(int line)
+{	
+	if(line > 1)
+	{
+		editorLines.erase(editorLines.begin()+line);
+		//currentLine--;
+		lineCount--;
+		Invalidate();
+	}
+	
 }
 
 //Messages
@@ -148,6 +159,7 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 				if(currentLine > 1)	//is the current line not the first line?
 				{
 					currentLine--;	//move cursor one line up
+					currentCursorPos = GetCurrentLineLength(); //move the cursor to end of the line
 					DrawCursor();
 				}
 			break;
@@ -168,6 +180,7 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			if(currentLine>1) //is the current line not the first line?
 			{
 				currentLine--; //move cursor one line up
+				if(currentCursorPos > GetCurrentLineLength())currentCursorPos = GetCurrentLineLength(); //check if the position is in limit
 				DrawCursor();
 			}
 			break;
@@ -178,6 +191,7 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			if(currentLine<lineCount) //is the current line not the last line?
 			{
 				currentLine++; //move cursor one line down
+				if(currentCursorPos > GetCurrentLineLength())currentCursorPos = GetCurrentLineLength(); //check if the position is in limit
 				DrawCursor();
 			}
 			break;
@@ -187,11 +201,12 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		{
 			if(currentCursorPos>0)
 				deleteChar();
-//			else
-//			{
-//				if(lineCount > 1)
-//					deleteLine();
-//			}
+			else
+				if(currentLine > 1)
+				{
+					currentLine--;
+					deleteLine(currentLine);
+				}
 			break;
 		}
 		
@@ -203,7 +218,6 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		default:
 		{
-			//addLine("BlaBlubber");
 			addChar(bytes);
 			break;
 		}

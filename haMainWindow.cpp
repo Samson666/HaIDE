@@ -154,7 +154,7 @@ void haMainWindow::MessageReceived(BMessage *msg)
 		
 		case HA_MESSAGE_EDITVIEW_STATUS_CHANGED:
 		{
-			std::string s = std::to_string(editorView->currentLine) + "," + std::to_string(editorView->currentCursorPos + 1);
+			std::string s = "Line:" + std::to_string(editorView->currentLine) + " Pos:" + std::to_string(editorView->currentCursorPos + 1) + " Lines:" + std::to_string(editorView->lineCount);
 			statusBar->status = s;
 			statusBar->Invalidate();
 			break;
