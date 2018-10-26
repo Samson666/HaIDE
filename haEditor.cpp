@@ -138,17 +138,26 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 	{
 		//moving cursor
 		case B_LEFT_ARROW:
-		{
-			currentCursorPos--;
-			DrawCursor();
+		{			
+			if(currentCursorPos>0) //is cursor not at first position in the line?
+			{
+				currentCursorPos--;	//move cursor one position to the left
+				DrawCursor();
+			}
+			else //move cursor on line up
+				if(currentLine > 1)	//is the current line not the first line?
+				{
+					currentLine--;	//move cursor one line up
+					DrawCursor();
+				}
 			break;
 		}
 		
 		case B_RIGHT_ARROW:
 		{
-			if(currentCursorPos < (int)editorLines[currentLine-1].length())
+			if(currentCursorPos < (int)editorLines[currentLine-1].length()) //is cursor not at the end of the line?
 			{
-				currentCursorPos++;
+				currentCursorPos++;	//move cursor one position to the right
 				DrawCursor();
 			}
 			break;
@@ -156,9 +165,9 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_UP_ARROW:
 		{
-			if(currentLine>1)
+			if(currentLine>1) //is the current line not the first line?
 			{
-				currentLine--;
+				currentLine--; //move cursor one line up
 				DrawCursor();
 			}
 			break;
@@ -166,9 +175,9 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		
 		case B_DOWN_ARROW:
 		{
-			if(currentLine<lineCount)
+			if(currentLine<lineCount) //is the current line not the last line?
 			{
-				currentLine++;
+				currentLine++; //move cursor one line down
 				DrawCursor();
 			}
 			break;
@@ -178,11 +187,11 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 		{
 			if(currentCursorPos>0)
 				deleteChar();
-			else
-			{
-				if(lineCount > 1)
-					deleteLine();
-			}
+//			else
+//			{
+//				if(lineCount > 1)
+//					deleteLine();
+//			}
 			break;
 		}
 		
