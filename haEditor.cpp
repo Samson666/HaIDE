@@ -204,16 +204,18 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}
 		
+		//move cursor to the end of the line
 		case B_END:
 		{
 			if(GetCurrentLineLength() > 1)
 			{
-				currentCursorPos = GetCurrentLineLength() + 1;
+				currentCursorPos = GetCurrentLineLength();
 				DrawCursor();
 			}
 			break;
 		}
 		
+		//move cursor to the beginning of the line
 		case B_HOME:
 		{
 			currentCursorPos = 0;
@@ -221,6 +223,9 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}
 		
+		
+		//!!! ToDo:
+		//!!! Wenn am Anfang der Zeile gelöscht wird, soll die Zeile der vorigen angehängt werden !!!
 		case B_BACKSPACE:
 		{
 			if(currentCursorPos>0)
@@ -247,6 +252,10 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}
 		
+		//!!! ToDo:
+		//!!! Wenn der Cursor am Anfang der Zeile ist, soll eine neue Zeile VOR der aktuellen Zeile eingefügt werden !!!
+		//!!! Wenn der Cursor am Ende der Zeile ist, soll eine neue Zeile NACH der aktuellen Zeile eingefügt werden !!!
+		//!!! Wenn der Cursor IN der Zeile ist, soll die Zeile geteilt werden. Die Restzeile nach dem Cursor soll in die neue Zeile kommen !!!
 		case B_ENTER:
 		{
 			newLine();
