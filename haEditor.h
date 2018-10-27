@@ -13,9 +13,9 @@ class haEditor : public BView
 {
 	public:
 		haEditor(BRect frame, const char* name);
-		void Draw(BRect updateRect);
 		
-		
+		void			AttachedToWindow();
+		void 			Draw(BRect updateRect);
 		void			Pulse();
 		void			addLine(std::string text);
 		void 			addChar(const char* c);
@@ -52,6 +52,8 @@ class haEditor : public BView
 		float			currentCursorPosF = 0;
 		bool			cursorVisible = false;
 		int				textLength = 0;
+		BPoint			textInset;
+		
 };
 
 #endif

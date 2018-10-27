@@ -13,7 +13,7 @@ ____________________________________________________________________
 haStatusBar::haStatusBar(BRect frame, const char* name)
 				: BView(frame, name, B_FOLLOW_BOTTOM | B_FOLLOW_LEFT_RIGHT,B_WILL_DRAW)
 {
-	textinset = BPoint(3,5);	
+	textinset = BPoint(HA_STATUSBAR_INSET,HA_STATUSBAR_INSET);	
 }
 
 void haStatusBar::writeStatus(void)

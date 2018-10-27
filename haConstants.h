@@ -85,7 +85,7 @@ __________________________________________________
 
 //haViewStatusBar
 #define HA_STATUSBAR_HEIGHT 20
-#define HA_STATUSBAR_INSET 50
+#define HA_STATUSBAR_INSET 5
 #define HA_STATUSBAR_COLOR rgb_color{200,200,200}
 //__________________________________________________________________________________________
 

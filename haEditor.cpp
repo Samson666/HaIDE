@@ -12,6 +12,7 @@
 haEditor::haEditor(BRect frame, const char* name)
 			: BView(frame, name, B_FOLLOW_ALL, B_WILL_DRAW | B_PULSE_NEEDED)
 {
+	textInset = BPoint(HA_EDITVIEW_INSET, HA_EDITVIEW_INSET);
 	GetFont(&font);
 	//font.SetSize(20.0);
 	//SetFont(&font);
@@ -19,6 +20,13 @@ haEditor::haEditor(BRect frame, const char* name)
 	font.GetHeight(&fHeight);
 	fontHeight = fHeight.ascent + fHeight.descent;
 	addLine(""); //creating an empty line at the beginning of the text
+}
+
+void haEditor::AttachedToWindow()
+{
+		//The looper exist AFTER the BView is attached to its parent Window ;-)
+		looper = Looper();
+		BView::AttachedToWindow();
 }
 
 void haEditor::Draw(BRect updateRect)
@@ -34,8 +42,7 @@ void haEditor::Draw(BRect updateRect)
 	
 	DrawCursor();
 	BView::Draw(updateRect);
-	BLooper* l = Looper();
-	l->PostMessage(HA_MESSAGE_EDITVIEW_STATUS_CHANGED);
+	looper->PostMessage(HA_MESSAGE_EDITVIEW_STATUS_CHANGED); //send a message to our mainwin that the status of the editor has changed
 }
 
 void haEditor::DrawCursor()
@@ -81,6 +88,10 @@ void haEditor::SetCurrentCursorPosF()
 	//std::cout << "Cursor active line" << actline.substr(0,currentCursorPos) << std::endl;
 	currentCursorPosF = font.StringWidth(actline.substr(0,currentCursorPos).c_str());
 }
+
+//!!! ToDo:
+//Vielleicht kann man addLine, insertLine und addChar in eine Funktion packen?
+//UND: Anpassen der Vertical ScrollBar!!!
 
 //adding text line add the end of the editorLines list
 void haEditor::addLine(std::string text)
