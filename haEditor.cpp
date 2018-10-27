@@ -13,15 +13,14 @@ haEditor::haEditor(BRect frame, const char* name)
 			: BView(frame, name, B_FOLLOW_ALL, B_WILL_DRAW | B_PULSE_NEEDED)
 {
 	textInset = BPoint(HA_EDITVIEW_INSET, HA_EDITVIEW_INSET);
+	for(int t=0; t < HA_EDITVIEW_TAB_WIDTH; t++)
+		editorTab += " ";
 	//setting the font to fixed font
 	BFont f(be_fixed_font);
-	f.SetSize(12.0);
-	//f.SetEncoding(B_ISO_8859_1);
+	f.SetSize(HA_EDITVIEW_FONTSIZE);
 	SetFont(&f);
 	//filling the font member variable
 	GetFont(&font);
-	//font.SetSize(20.0);
-	//SetFont(&font);
 	font_height fHeight;
 	font.GetHeight(&fHeight);
 	fontHeight = fHeight.ascent + fHeight.descent;
@@ -35,14 +34,30 @@ void haEditor::AttachedToWindow()
 		BView::AttachedToWindow();
 }
 
+
+//!!! ToDo:
+//!!! Steuerzeichen interpretieren und während der Eingabe darauf reagieren !!!
 void haEditor::Draw(BRect updateRect)
 {
-	SetHighColor(HA_EDIT_VIEW_TEXT_COLOR);
+	SetHighColor(HA_EDITVIEW_TEXT_COLOR);
 	int i=1;
 	for( std::string s : editorLines)
 	{
+		std::string scopy = s;
+		std::string::size_type n = 0;
+		while(n!=std::string::npos)
+		{
+			n = scopy.find("\t", n);
+			if(n!=std::string::npos)
+			{
+				std::cout << "found tab ::" << std::endl;
+				scopy.erase(n,1);
+				scopy.insert(n, editorTab);
+			}
+		}
+			
 		MovePenTo(0, fontHeight  * i);
-		DrawString(s.c_str());
+		DrawString(scopy.c_str());
 		i++;
 	}
 	
@@ -54,7 +69,7 @@ void haEditor::Draw(BRect updateRect)
 void haEditor::DrawCursor()
 {
 	if(!IsFocus())return;
-	SetHighColor(255,0,0);
+	SetHighColor(HA_EDITVIEW_CURSOR_COLOR);
 	SetCurrentCursorPosF();
 	font_height fHeight;
 	font.GetHeight(&fHeight);
@@ -242,6 +257,13 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}
 		
+		case B_TAB:
+		{
+			//std::cout << "TAB detected" << std::endl;
+			addChar( "\t" );
+			
+			break;
+		}
 		
 		//!!! ToDo:
 		//!!! Wenn am Anfang der Zeile gelöscht wird, soll die Zeile der vorigen angehängt werden !!!
@@ -281,8 +303,6 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}	
 		
-		//!!!ToDo:
-		//!!!Encoding checken!!!
 		default:
 		{
 			addChar(bytes);

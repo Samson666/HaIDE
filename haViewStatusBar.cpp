@@ -23,7 +23,6 @@ void haStatusBar::writeStatus(void)
 
 void haStatusBar::Draw(BRect updateRect)
 {
-		SetHighColor(HA_EDIT_VIEW_TEXT_COLOR);
 		StrokeLine(BPoint(0,0), BPoint(Bounds().Width(),0));
 		writeStatus();
 		BView::Draw(updateRect);	

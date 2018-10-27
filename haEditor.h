@@ -53,6 +53,7 @@ class haEditor : public BView
 		bool			cursorVisible = false;
 		int				textLength = 0;
 		BPoint			textInset;
+		std::string		editorTab;
 		
 };
 
