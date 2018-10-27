@@ -13,6 +13,12 @@ haEditor::haEditor(BRect frame, const char* name)
 			: BView(frame, name, B_FOLLOW_ALL, B_WILL_DRAW | B_PULSE_NEEDED)
 {
 	textInset = BPoint(HA_EDITVIEW_INSET, HA_EDITVIEW_INSET);
+	//setting the font to fixed font
+	BFont f(be_fixed_font);
+	f.SetSize(12.0);
+	//f.SetEncoding(B_ISO_8859_1);
+	SetFont(&f);
+	//filling the font member variable
 	GetFont(&font);
 	//font.SetSize(20.0);
 	//SetFont(&font);
@@ -36,7 +42,7 @@ void haEditor::Draw(BRect updateRect)
 	for( std::string s : editorLines)
 	{
 		MovePenTo(0, fontHeight  * i);
-		DrawString(s.c_str());	
+		DrawString(s.c_str());
 		i++;
 	}
 	
@@ -90,7 +96,7 @@ void haEditor::SetCurrentCursorPosF()
 }
 
 //!!! ToDo:
-//Vielleicht kann man addLine, insertLine und addChar in eine Funktion packen?
+//Vielleicht kann man addLine, insertLine in eine Funktion packen?
 //UND: Anpassen der Vertical ScrollBar!!!
 
 //adding text line add the end of the editorLines list
@@ -122,9 +128,11 @@ void haEditor::insertLine(std::string text, int pos)
 //inserting a character at currentLine/currentCursorPos
 void haEditor::addChar(const char* c)
 {
-	std::string line = editorLines[currentLine-1];
+	std::string s = c;
+	std::string line = editorLines[currentLine-1]; //getting the length of the string cause of Unicode
 	if(currentCursorPos > (int)line.length())currentCursorPos = line.length(); //check if the position is in limit
-	line.insert(currentCursorPos++,c);
+	line.insert(currentCursorPos, s);
+	currentCursorPos += s.length(); 
 	editorLines[currentLine-1]=line;
 	Invalidate();
 }
@@ -162,7 +170,7 @@ void haEditor::deleteLine(int line)
 void haEditor::KeyDown(const char* bytes, int32 numBytes)
 {
 	//std::cout << "KeyDown received\n" << std::endl;
-	//std::cout << bytes[0] << std::endl;
+	//std::cout << bytes << std::endl;
 	switch(bytes[0])
 	{
 		//moving cursor
@@ -273,6 +281,8 @@ void haEditor::KeyDown(const char* bytes, int32 numBytes)
 			break;
 		}	
 		
+		//!!!ToDo:
+		//!!!Encoding checken!!!
 		default:
 		{
 			addChar(bytes);
